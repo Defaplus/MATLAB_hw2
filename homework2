@@ -1,0 +1,136 @@
+% Author Name: Jacen Moses
+% Email: mosesj45@rowan.edu
+% Course: MATLAB Programming - Fall 2024
+% Assignment: Assignment 2
+% Date: 9/20/2024
+
+% Task 1
+population = [5000 5200 5350 5600 5800];
+growth_rate = [0 population(1, 2)/population(1, 1) population(1, 3)/population(1, 2) population(1, 4)/population(1, 3) population(1, 5)/population(1, 4)];
+pop_data = [population; growth_rate];
+fprintf("%d ", pop_data(1, :));
+fprintf("\n");
+fprintf("%f ", pop_data(2, :));
+
+% Task 2
+function caesar_cypher = caesar(textInput, shiftValue)
+textToDouble = double(textInput);
+shiftedDouble = textToDouble+shiftValue;
+doubleLength = length(shiftedDouble);
+for i = 1:doubleLength
+    while shiftedDouble(i) > 122
+        shiftedDouble(i) = shiftedDouble(i)-26;
+    end
+    while shiftedDouble(i) < 97
+        shiftedDouble(i) = shiftedDouble(i)+26;
+    end
+end
+caesar_cypher = char(shiftedDouble);
+end
+text = input("\nmessage to encrypt: ", 's');
+shift = input("shift value (1-25): ");
+output = caesar(text, shift);
+fprintf("%s\n", output);
+
+% Task 3
+day1 = ["2024-09-01" 25.5 60 0];
+day2 = ["2024-09-02" 26.0 65 5];
+day3 = ["2024-09-03" 24.5 70 10];
+day4 = ["2024-09-04" 23.0 75 15];
+day5 = ["2024-09-05" 22.5 80 20];
+fileID = fopen('weather_data.txt', 'w');
+fprintf(fileID, "%s %10s %13s %9s\n", "Date", "Temp", "Humidity", "Rainfall");
+fprintf(fileID, '%s %f %f %f\n', day1, day2, day3, day4, day5);
+fclose(fileID);
+
+type weather_data.txt
+
+temp = [day1(2) day2(2) day3(2) day4(2) day5(2)];
+humi = [day1(3) day2(3) day3(3) day4(3) day5(3)];
+prec = [day1(4) day2(4) day3(4) day4(4) day5(4)];
+avgTemp = (temp(1)+temp(2)+temp(3)+temp(4)+temp(5));
+avgHumi = (humi(1)+humi(2)+humi(3)+humi(4)+humi(5))/5;
+avgPrec = (prec(1)+prec(2)+prec(3)+prec(4)+prec(5))/5;
+
+fprintf("\navgTemp: %f\navgHumi: %f\navgPrec: %f", avgTemp, avgHumi, avgPrec);
+
+
+% Task 4
+planet_distances = [0.39, 0.72, 1.0, 1.52, 5.2, 9.58, 19.22, 30.06];
+planet_sizes = [0.38, 0.95, 1.0, 0.53, 11.2, 9.45, 4.0, 3.88]; % Relative to Earth
+
+
+planet_names = {'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'};
+
+figure;
+
+% Scatter plot
+subplot(2, 1, 1);
+scatter(planet_distances, planet_sizes, planet_sizes * 100, 'filled');
+title('Planet Distances vs. Sizes');
+xlabel('Distance from Sun (AU)');
+ylabel('Relative Size (Earth = 1)');
+set(gca, 'XTick', planet_distances, 'XTickLabel', planet_names);
+grid on;
+
+legend(planet_names, 'Location', 'best');
+
+% Bar chart
+subplot(2, 1, 2);
+bar(planet_distances, 'FaceColor', 'skyblue');
+title('Planet Distances from the Sun');
+ylabel('Distance (AU)');
+set(gca, 'XTickLabel', planet_names);
+grid on;
+
+saveas(gcf, 'solar_system_visualization.png');
+
+
+% Task 5
+num_days = 30;
+closing_prices = round(rand(num_days, 1) * 100 + 50, 2); % Prices between 50 and 150
+fileID = fopen('stock_data.txt', 'w');
+fprintf(fileID, '%.2f\n', closing_prices);
+fclose(fileID);
+
+data = load('stock_data.txt');
+
+average_price = mean(data);
+highest_price = max(data);
+lowest_price = min(data);
+
+price_increases = sum(diff(data) > 0);
+
+fprintf('Average Closing Price: %.2f\n', average_price);
+fprintf('Highest Closing Price: %.2f\n', highest_price);
+fprintf('Lowest Closing Price: %.2f\n', lowest_price);
+fprintf('Number of Days Price Increased: %d\n', price_increases);
+
+% Line plot
+figure;
+hold on;
+plot(data, 'b-', 'LineWidth', 2);
+yline(average_price, 'r--', 'Average Price', 'LabelHorizontalAlignment', 'left');
+yline(highest_price, 'g--', 'Highest Price', 'LabelHorizontalAlignment', 'left');
+yline(lowest_price, 'm--', 'Lowest Price', 'LabelHorizontalAlignment', 'left');
+hold off;
+
+% Labels and title
+xlabel('Days');
+ylabel('Closing Price ($)');
+title('Stock Closing Prices Over 30 Days');
+legend('Daily Closing Prices', 'Average Price', 'Highest Price', 'Lowest Price');
+grid on;
+
+saveas(gcf, 'stock_analysis.png');
+
+summaryFileID = fopen('stock_summary.txt', 'w');
+fprintf(summaryFileID, 'Stock Analysis Summary:\n');
+fprintf(summaryFileID, 'Average Closing Price: %.2f\n', average_price);
+fprintf(summaryFileID, 'Highest Closing Price: %.2f\n', highest_price);
+fprintf(summaryFileID, 'Lowest Closing Price: %.2f\n', lowest_price);
+fprintf(summaryFileID, 'Number of Days Price Increased: %d\n', price_increases);
+fclose(summaryFileID);
+
+
+clc;
